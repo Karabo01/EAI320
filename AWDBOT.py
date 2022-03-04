@@ -25,15 +25,19 @@ class RPS(object):
 
     def putin(self,levels):
         i=0
-        while(i<3**(levels)):
+        j=0
+        while(j<=levels ):
+            i=0
+            while(i<3**(levels-j)):
 
-            if(self.rootNode==None):
-                self.rootNode = self.putItem(self.rootNode, "start")
-            else:
-                self.rootNode = self.putItem(self.rootNode, "R")
-                self.rootNode = self.putItem(self.rootNode, "P")
-                self.rootNode = self.putItem(self.rootNode, "S")
-                i += 1
+                if(self.rootNode==None):
+                    self.rootNode = self.putItem(self.rootNode, "start")
+                else:
+                    self.rootNode = self.putItem(self.rootNode, "R")
+                    self.rootNode = self.putItem(self.rootNode, "P")
+                    self.rootNode = self.putItem(self.rootNode, "S")
+                    i += 1
+            j+=1
 
 
         
@@ -170,11 +174,11 @@ def printPostorder(root):
 #Main is here
 def main():
 
-    levels=1
+    levels=3
     print("Hello World!")
     tree = RPS()
 
-    tree.putin(levels)
+    tree.putin(levels-1)
     print("tree has 3 levels")
 
 # LETS SEE
