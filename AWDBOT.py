@@ -23,6 +23,9 @@ class RPS(object):
     def __init__(self):
         self.rootNode = None
 
+    """The best president guy. This is the function that brought it all together. Inspired by the 
+        great Vladimir Putin, this function is fast, efficient, and precise. No nonsense and get the job done"""
+
     def putin(self,levels):
         i=0
         j=0
@@ -39,9 +42,8 @@ class RPS(object):
                     i += 1
             j+=1
 
-
-        
-         
+    """This function would serve to actually insert the relevant node at the opening.
+        It will be used during the initialisation of the RPS tree."""
 
     def putItem(self, node,key):
 
@@ -73,6 +75,9 @@ class RPS(object):
 
         return self.rootNode
 
+    """ Function to check whether the visited node and/or its kids is/are full(has three kids) 
+        and choose which node will be appended by comparing the heights of the node"""
+
     def check(self, node, key):
 
         if (node.left.full < 3):
@@ -92,14 +97,18 @@ class RPS(object):
 
 
 
-# Function to print level order traversal of tree
+"""Function to print level order traversal of tree and will be
+   the main Breadth First Search
+"""
+
 def printLevelOrder(root,began):
     h = height(root)
     for i in range(1, h+1):
         printCurrentLevel(root, i,began)
 
+""" Print nodes at a current level of the tree and is a helper function 
+    to the printLevelOrder function which is used for the breadth first search"""
 
-# Print nodes at a current level
 def printCurrentLevel(root, level, began):
     temp = root
 
@@ -118,21 +127,25 @@ def printCurrentLevel(root, level, began):
         printCurrentLevel(root.center, level - 1, began)
         printCurrentLevel(root.right, level-1, began)
 
-""" Compute the height of a tree--the number of nodes
-    along the longest path from the root node down to
-    the farthest leaf node
-"""
+"""printP will be the function that recursively prints the parents of the current node
+when using Depth First search. Nodes will be returned in post order"""
 def printP(node, play):
     if node is None:
         return ""
     elif node.parent is None:
         return ""
-    elif node.parent== "start":
+    elif node.parent.character == "start":
         play += node.character
         return play
     else:
-        play += printP(node.parent, play)
+        play += printP(node.parent, play) + node.character
         return play
+
+""" Compute the height of a tree after all three leaf nodes have been 
+    inserted --the number of nodes along the longest path from the root 
+    node down to the farthest RIGHT leaf of the node
+"""
+
 def rheight(node):
     Rheight=0
     if node is None:
@@ -143,6 +156,10 @@ def rheight(node):
             Rheight+=1
         return Rheight
 
+""" Compute the height of a tree--the number of nodes
+    along the longest path from the root node down to
+    the farthest leaf node
+"""
 def height(node):
     if node is None:
         return 0
@@ -160,14 +177,15 @@ def height(node):
             return rheight+1
 
 
+
 def printPostorder(root):
     if root:
         # First recur on left child
-        print(root.character)
         printPostorder(root.left)
         printPostorder(root.center)
         # the recur on right child
         printPostorder(root.right)
+        print(printP(root.parent, "") + root.character)
 
         # now print the data of node
 
@@ -185,13 +203,11 @@ def main():
 
     print("Level order traversal of binary tree is -")
     printLevelOrder(tree.rootNode,began)
-    #printPostorder(tree.rootNode)
+    print("")
+    printPostorder(tree.rootNode)
   #  tree.put("R")
    # tree.put("P")
    # tree.put("S")
-    #Selasie's work station - Entrance
-
-    #Selasie's work station - Exit
 
 if __name__ == "__main__":
     main()
