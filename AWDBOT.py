@@ -6,6 +6,8 @@
 # https://qvault.io/python/binary-search-tree-in-python/
 play = ""
 began= False
+moves=[]
+round=0
 class Node(object):
 
     def __init__(self,character):
@@ -16,6 +18,7 @@ class Node(object):
         self.parent= None
         self.full=0
         self.height=0
+        self.visited=False
 
 
 class RPS(object):
@@ -25,6 +28,7 @@ class RPS(object):
 
     """The best president guy. This is the function that brought it all together. Inspired by the 
         great Vladimir Putin, this function is fast, efficient, and precise. No nonsense and get the job done"""
+    #def insert(self,node, key):
 
     def putin(self,levels):
         i=0
@@ -101,7 +105,7 @@ class RPS(object):
    the main Breadth First Search
 """
 
-def printLevelOrder(root,began):
+def BFS(root,began):
     h = height(root)
     for i in range(1, h+1):
         printCurrentLevel(root, i,began)
@@ -135,9 +139,11 @@ def printP(node, play):
     elif node.parent is None:
         return ""
     elif node.parent.character == "start":
+        moves.append(node)
         play += node.character
         return play
     else:
+        moves.append(node)
         play += printP(node.parent, play) + node.character
         return play
 
@@ -178,37 +184,52 @@ def height(node):
 
 
 
-def printPostorder(root):
+def DFS(root):
     if root:
         # First recur on left child
-        printPostorder(root.left)
-        printPostorder(root.center)
+        DFS(root.left)
+        DFS(root.center)
         # the recur on right child
-        printPostorder(root.right)
-        print(printP(root.parent, "") + root.character)
+        DFS(root.right)
+        moves.append(root)
+        #print(printP(root.parent, "") + root.character)
 
         # now print the data of node
 
-#Main is here
-def main():
 
-    levels=3
-    print("Hello World!")
-    tree = RPS()
 
-    tree.putin(levels-1)
-    print("tree has 3 levels")
+levels=3
+tree = RPS()
+tree.putin(levels - 1)
+if input == "":
+    tree.putin(levels - 1)
+    round=-1
+    moves.clear()
 
-# LETS SEE
+else:
+    round+=1
+    #BFS(tree.rootNode,began)
+    #rootNode)
+    DFS(tree.rootNode)
+if(round<len(moves)):
+    if moves[0].visited == False:
+        output = moves[0].character
+        moves[0].visited = True
+    else:
+        i = 0
+        while moves[i].visited == True:
+            i += 1
+        moves[i].visited = True
+        output = moves[i].character
+        print(moves[i].character)
+else:
+    output="R"
+    i=0
+    round=0
 
-    print("Level order traversal of binary tree is -")
-    printLevelOrder(tree.rootNode,began)
-    print("")
-    printPostorder(tree.rootNode)
-  #  tree.put("R")
-   # tree.put("P")
-   # tree.put("S")
 
-if __name__ == "__main__":
-    main()
- 
+
+
+
+
+
