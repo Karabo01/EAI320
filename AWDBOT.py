@@ -191,43 +191,68 @@ def DFS(root):
         DFS(root.center)
         # the recur on right child
         DFS(root.right)
-        moves.append(root)
+        if(root.character!="start"):
+            moves.append(root.character)
         #print(printP(root.parent, "") + root.character)
 
-        # now print the data of node
-
-
-
-levels=3
+round = -1
+import random
+levels = 3
+previous = "R"
 tree = RPS()
 tree.putin(levels - 1)
-if input == "":
-    tree.putin(levels - 1)
-    round=-1
-    moves.clear()
+        # now print the data of node
+while(1):
 
-else:
-    round+=1
-    #BFS(tree.rootNode,began)
-    #rootNode)
-    DFS(tree.rootNode)
-if(round<len(moves)):
-    if moves[0].visited == False:
-        output = moves[0].character
-        moves[0].visited = True
+    if(round==-1):
+        break_min = 2
+        break_max = 5
+        #random.seed(0)
+        # The maximum number of repeats when repeating.
+        repeat_max = 10
+        input=""
+        length = random.randint(break_min, break_max)
+
+        # Generate the random break sequence.
+        sequence = ["X"] * length
+        for counter in range(length):
+            sequence[counter] = random.choice(["R", "P", "S"])
     else:
-        i = 0
-        while moves[i].visited == True:
-            i += 1
-        moves[i].visited = True
-        output = moves[i].character
-        print(moves[i].character)
-else:
-    output="R"
-    i=0
-    round=0
+        if play == "R":
+            input = random.choice(["P", "S"])
+        elif play == "P":
+            input = random.choice(["R", "S"])
+        else:
+            input = random.choice(["R", "P"])
+    if input == "":
+        tree.putin(levels - 1)
+        history = []
+        DFS(tree.rootNode)
+        broken=False
+        round=0
+        previous = "R"
+    else:
 
-
+        play=input
+        history.append(input)
+        if(len(history)>=2):
+            if(history[0]==history[1]):
+                broken=True
+            else:
+                previous = moves[round]
+                history.pop(0)
+        else:
+            previous = moves[round]
+        if(broken):
+            i=0
+            while(round>=0 and i<5):
+                round-=1
+                i+=1
+            previous=moves[round]
+        else:
+            round+=1
+    output=previous
+#Add
 
 
 
