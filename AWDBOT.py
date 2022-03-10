@@ -1,13 +1,8 @@
-###Code here
-#I'll try start bulding after my class test tomorrow. You can do some research about which dfs and bfs to use in python
-# I still need to decide what kinda arrays I'll be using
-# yeah I started with the research vele. I'll see if I can find any solid algorithms tomorrow 
-# #and then we'll just decide which array would work best
-# https://qvault.io/python/binary-search-tree-in-python/
+#Karabo Morena
+#Selasie Seade
 play = ""
-began= False
-moves=[]
-round=0
+moves=[]#Moves to be played
+round=0# round in game
 class Node(object):
 
     def __init__(self,character):
@@ -105,15 +100,15 @@ class RPS(object):
    the main Breadth First Search
 """
 
-def BFS(root,began):
+def BFS(root):
     h = height(root)
     for i in range(1, h+1):
-        printCurrentLevel(root, i,began)
+        printCurrentLevel(root, i)
 
 """ Print nodes at a current level of the tree and is a helper function 
     to the printLevelOrder function which is used for the breadth first search"""
 
-def printCurrentLevel(root, level, began):
+def printCurrentLevel(root, level):
     temp = root
 
     allParents = ""
@@ -124,12 +119,12 @@ def printCurrentLevel(root, level, began):
         while temp.character != "start" and temp.parent.character != "start":
             allParents = allParents + temp.parent.character
             temp = temp.parent
-        #finished = printP(root, play, began)
-        print(allParents + root.character, end=" ")
+        finished = printP(root, play)
+        #print(allParents + root.character, end=" ")
     elif level > 1:
-        printCurrentLevel(root.left, level-1, began)
-        printCurrentLevel(root.center, level - 1, began)
-        printCurrentLevel(root.right, level-1, began)
+        printCurrentLevel(root.left, level-1)
+        printCurrentLevel(root.center, level - 1)
+        printCurrentLevel(root.right, level-1)
 
 """printP will be the function that recursively prints the parents of the current node
 when using Depth First search. Nodes will be returned in post order"""
@@ -139,11 +134,13 @@ def printP(node, play):
     elif node.parent is None:
         return ""
     elif node.parent.character == "start":
-        moves.append(node)
+        if (node.character != "start"):
+            moves.append(node.character)
         play += node.character
         return play
     else:
-        moves.append(node)
+        if(node.character!="start"):
+            moves.append(node.character)
         play += printP(node.parent, play) + node.character
         return play
 
@@ -197,11 +194,14 @@ def DFS(root):
 
 round = -1
 import random
-levels = 3
+levels = 5
 previous = "R"
 tree = RPS()
 tree.putin(levels - 1)
-        # now print the data of node
+breakSeq=[]
+ourplays=[]#All moves performed by AWDBOT
+repeat=-1
+
 while(1):
 
     if(round==-1):
@@ -214,45 +214,73 @@ while(1):
         length = random.randint(break_min, break_max)
 
         # Generate the random break sequence.
-        sequence = ["X"] * length
+        sequence = [ "X" ]*length
         for counter in range(length):
-            sequence[counter] = random.choice(["R", "P", "S"])
+           sequence[counter] = random.choice(["R", "P", "S"])
     else:
-        if play == "R":
+        if ourplays == sequence:
+            if(broken==True):
+                ourplays.clear()
+            repeat = random.randint(length, repeat_max)
+
+        elif(len(ourplays)>5):
+            ourplays.pop(0)
+        if(repeat>=0):
+            input=play
+            repeat-=1
+        elif play == "R":
             input = random.choice(["P", "S"])
         elif play == "P":
             input = random.choice(["R", "S"])
         else:
             input = random.choice(["R", "P"])
+    bfs_dfs = 0 #Choose BFS or DFS
     if input == "":
         tree.putin(levels - 1)
         history = []
-        DFS(tree.rootNode)
+        if(bfs_dfs==0):
+            BFS(tree.rootNode)
+        else:
+            DFS(tree.rootNode)
         broken=False
         round=0
-        previous = "R"
+        previous = moves[0]
     else:
 
         play=input
         history.append(input)
-        if(len(history)>=2):
-            if(history[0]==history[1]):
+        if(len(history)>=2):#check if opposing bot has played more than twice. 2<=seq<=5
+            if(history[len(history)-2]==history[len(history)-1]):#Check wether moves from opposing bot is repeated
+                if(broken==False):#This executes only once
+                    round = 0
+                    moves.clear()
+                    i = 0
+                    while (i < len(ourplays)):
+                        moves.append(ourplays[i])#Move ssequence of moves that caused break into "moves[]"
+                        i += 1
                 broken=True
             else:
+                broken= False
                 previous = moves[round]
-                history.pop(0)
+                ourplays.append(previous)
+                if (len(ourplays) > 5):
+                    ourplays.pop(0)
         else:
-            previous = moves[round]
+                previous = moves[round]
+                ourplays.append(previous)
+
         if(broken):
-            i=0
-            while(round>=0 and i<5):
-                round-=1
-                i+=1
-            previous=moves[round]
+
+            if(input == "R"):
+                previous = "P"
+            elif (input == "P"):
+                previous = "S"
+            else:
+                previous = "R"
+
         else:
             round+=1
-    output=previous
-#Add
+    output = previous
 
 
 
