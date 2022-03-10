@@ -134,14 +134,15 @@ def printP(node, play):
     elif node.parent is None:
         return ""
     elif node.parent.character == "start":
-        if (node.character != "start"):
-            moves.append(node.character)
         play += node.character
+        if (node.character != "start"):
+            moves.append(play)
         return play
     else:
-        if(node.character!="start"):
-            moves.append(node.character)
+
         play += printP(node.parent, play) + node.character
+        if (node.character != "start"):
+            moves.append(play)
         return play
 
 """ Compute the height of a tree after all three leaf nodes have been 
@@ -192,19 +193,19 @@ def DFS(root):
             moves.append(root.character)
         #print(printP(root.parent, "") + root.character)
 
-round = -1
+round = -2
 import random
 levels = 5
 previous = "R"
 tree = RPS()
 tree.putin(levels - 1)
-breakSeq=[]
+breakSeq=False
 ourplays=[]#All moves performed by AWDBOT
 repeat=-1
 
 while(1):
 
-    if(round==-1):
+    if(round==-2):
         break_min = 2
         break_max = 5
         #random.seed(0)
@@ -214,9 +215,9 @@ while(1):
         length = random.randint(break_min, break_max)
 
         # Generate the random break sequence.
-        sequence = [ "X" ]*length
+        sequence = ["X"] * length
         for counter in range(length):
-           sequence[counter] = random.choice(["R", "P", "S"])
+            sequence[counter] = random.choice(["R", "P", "S"])
     else:
         if ourplays == sequence:
             if(broken==True):
@@ -234,6 +235,9 @@ while(1):
             input = random.choice(["R", "S"])
         else:
             input = random.choice(["R", "P"])
+
+
+
     bfs_dfs = 0 #Choose BFS or DFS
     if input == "":
         tree.putin(levels - 1)
@@ -246,40 +250,66 @@ while(1):
         round=0
         previous = moves[0]
     else:
-
-        play=input
-        history.append(input)
-        if(len(history)>=2):#check if opposing bot has played more than twice. 2<=seq<=5
-            if(history[len(history)-2]==history[len(history)-1]):#Check wether moves from opposing bot is repeated
-                if(broken==False):#This executes only once
-                    round = 0
-                    moves.clear()
-                    i = 0
-                    while (i < len(ourplays)):
-                        moves.append(ourplays[i])#Move ssequence of moves that caused break into "moves[]"
-                        i += 1
-                broken=True
-            else:
-                broken= False
-                previous = moves[round]
-                ourplays.append(previous)
-                if (len(ourplays) > 5):
-                    ourplays.pop(0)
-        else:
-                previous = moves[round]
-                ourplays.append(previous)
-
-        if(broken):
-
-            if(input == "R"):
-                previous = "P"
-            elif (input == "P"):
-                previous = "S"
-            else:
-                previous = "R"
-
-        else:
+        if(breakSeq==True and broken==False):
+            if(round==0):
+                ourplays.clear()
+            previous = moves[round]
+            ourplays.append(moves[round])
             round+=1
+            if(round==len(moves)):
+                breakSeq=False
+        else:
+            if(round==-1):
+                round=0
+            play=input
+            history.append(input)
+            if(len(history)>=2):#check if opposing bot has played more than twice. 2<=seq<=5
+                if(history[len(history)-2]==history[len(history)-1]):#Check wether moves from opposing bot is repeated
+                    if(broken==False):#This executes only once
+                        round = -1
+                        moves.clear()
+                        i = 0
+                        while (i < len(ourplays)):
+                            moves.append(ourplays[i])#Move ssequence of moves that caused break into "moves[]"
+                            i += 1
+                    broken=True
+                    breakSeq=True
+                else:
+                    broken= False
+                    if(broken==False and breakSeq==True):
+                        broken=True
+                        ourplays.clear()
+                        j = 0
+                        while (j < len(moves)):
+                            ourplays.append(moves[j])
+                            j += 1
+                    else:
+                        previous = moves[round]
+                        ourplays.clear()
+                        j=0
+                        while(j<len(previous)):
+                            ourplays.append(previous[j])
+                            j += 1
+
+            else:
+                    previous = moves[round]
+                    ourplays.clear()
+                    j = 0
+                    while (j < len(previous)):
+                        ourplays.append(previous[j])
+                        j+=1
+
+            if(broken):
+
+                if(input == "R"):
+                    previous = "P"
+                elif (input == "P"):
+                    previous = "S"
+                else:
+                    previous = "R"
+
+            else:
+                round+=1
     output = previous
 
 
