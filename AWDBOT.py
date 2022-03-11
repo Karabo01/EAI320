@@ -180,7 +180,21 @@ def height(node):
         else:
             return rheight+1
 
-
+def printPDFS(node, play):
+    if node is None:
+        return ""
+    elif node.parent is None:
+        return ""
+    elif node.parent.character == "start":
+        play += node.character
+        #if (node.character != "start"):
+         #   moves.append(play)
+        return play
+    elif(node.character != "start"):
+        play += printP(node.parent, play) + node.character
+        #if (node.character != "start"):
+        #    moves.append(play)
+        return play
 
 def DFS(root):
     if root:
@@ -190,8 +204,7 @@ def DFS(root):
         # the recur on right child
         DFS(root.right)
         if(root.character!="start"):
-            moves.append(root.character)
-        #print(printP(root.parent, "") + root.character)
+            moves.append(printPDFS(root.parent, "") + root.character)
 
 round = -2
 import random
@@ -202,7 +215,7 @@ tree.putin(levels - 1)
 breakSeq=False
 ourplays=[]#All moves performed by AWDBOT
 repeat=-1
-
+"""
 while(1):
 
     if(round==-2):
@@ -236,83 +249,102 @@ while(1):
         else:
             input = random.choice(["R", "P"])
 
+"""
 
-
-    bfs_dfs = 0 #Choose BFS or DFS
-    if input == "":
-        tree.putin(levels - 1)
-        history = []
-        if(bfs_dfs==0):
-            BFS(tree.rootNode)
-        else:
-            DFS(tree.rootNode)
-        broken=False
-        round=0
-        previous = moves[0]
+bfs_dfs = 1 #Choose BFS or DFS
+if input == "":
+    tree.putin(levels - 1)
+    history = []
+    if(bfs_dfs==0):
+        BFS(tree.rootNode)
     else:
-        if(breakSeq==True and broken==False):
-            if(round==0):
-                ourplays.clear()
-            previous = moves[round]
-            ourplays.append(moves[round])
-            round+=1
-            if(round==len(moves)):
-                breakSeq=False
-        else:
-            if(round==-1):
-                round=0
-            play=input
-            history.append(input)
-            if(len(history)>=2):#check if opposing bot has played more than twice. 2<=seq<=5
-                if(history[len(history)-2]==history[len(history)-1]):#Check wether moves from opposing bot is repeated
-                    if(broken==False):#This executes only once
-                        round = -1
-                        moves.clear()
-                        i = 0
-                        while (i < len(ourplays)):
-                            moves.append(ourplays[i])#Move ssequence of moves that caused break into "moves[]"
-                            i += 1
-                    broken=True
-                    breakSeq=True
-                else:
-                    broken= False
-                    if(broken==False and breakSeq==True):
-                        broken=True
-                        ourplays.clear()
-                        j = 0
-                        while (j < len(moves)):
-                            ourplays.append(moves[j])
-                            j += 1
-                    else:
-                        previous = moves[round]
-                        ourplays.clear()
-                        j=0
-                        while(j<len(previous)):
-                            ourplays.append(previous[j])
-                            j += 1
-
+        DFS(tree.rootNode)
+    broken=False
+    round=0
+    previous = moves[0]
+else:
+    if (bfs_dfs == 0):
+        BFS(tree.rootNode)
+    else:
+        DFS(tree.rootNode)
+    if(breakSeq==True and broken==False):
+        if(round==0):
+            ourplays.clear()
+        previous = moves[round]
+        ourplays.append(moves[round])
+        round+=1
+        if(round==len(moves)):
+            breakSeq=False
+    else:
+        if(round<0):
+            round=0
+        play=input
+        history.append(input)
+        if(len(history)>=2):#check if opposing bot has played more than twice. 2<=seq<=5
+            if(history[len(history)-2]==history[len(history)-1]):#Check wether moves from opposing bot is repeated
+                if(broken==False):#This executes only once
+                    round = -1
+                    moves.clear()
+                    i = 0
+                    while (i < len(ourplays)):
+                        moves.append(ourplays[i])#Move ssequence of moves that caused break into "moves[]"
+                        i += 1
+                broken=True
+                breakSeq=True
             else:
-                    previous = moves[round]
+                broken= False
+                if(broken==False and breakSeq==True):
+                    broken=True
                     ourplays.clear()
                     j = 0
-                    while (j < len(previous)):
-                        ourplays.append(previous[j])
-                        j+=1
-
-            if(broken):
-
-                if(input == "R"):
-                    previous = "P"
-                elif (input == "P"):
-                    previous = "S"
+                    while (j < len(moves)):
+                        ourplays.append(moves[j])
+                        j += 1
                 else:
-                    previous = "R"
+                    previous = moves[round]
+                    ourplays.clear()
+                    j=0
+                    while(j<len(previous)):
+                        ourplays.append(previous[j])
+                        j += 1
 
+        else:
+                previous = moves[round]
+                ourplays.clear()
+                j = 0
+                while (j < len(previous)):
+                    ourplays.append(previous[j])
+                    j+=1
+
+        if(broken):
+
+            if(input == "R"):
+                previous = "P"
+            elif (input == "P"):
+                previous = "S"
             else:
-                round+=1
-    output = previous
+                previous = "R"
 
+        else:
+            round+=1
+output = previous
 
+"""
+Pool 1: 1 bots loaded
+Pool 2: 1 bots loaded
+Playing 10 matches per pairing.
+Running matches in 4 threads
+10 matches run
+total run time: 20.49 seconds
+
+breakable(1).py: won 30.0% of matches (3 of 10)
+    won 33.2% of rounds (3323 of 10000)
+    avg score -2.0, net score -20.0
+
+AWDBOT.py: won 70.0% of matches (7 of 10)
+    won 33.4% of rounds (3343 of 10000)
+    avg score 2.0, net score 20.0
+"""
 
 
 
